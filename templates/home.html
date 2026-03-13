@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Judgement AI</title>
+
+<style>
+
+body{
+    margin:0;
+    height:100vh;
+    font-family:Arial, Helvetica, sans-serif;
+    background: radial-gradient(circle at top,#111,#000);
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.container{
+    text-align:center;
+}
+
+h1{
+    font-size:60px;
+    letter-spacing:3px;
+    margin-bottom:10px;
+}
+
+.subtitle{
+    opacity:0.7;
+    margin-bottom:60px;
+}
+
+.buttons{
+    display:flex;
+    gap:40px;
+    justify-content:center;
+}
+
+.btn{
+    padding:25px 45px;
+    font-size:20px;
+    border:none;
+    border-radius:14px;
+    cursor:pointer;
+    transition:0.3s;
+    color:white;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+/* heatmap */
+.heatmap{
+    background:linear-gradient(135deg,#ff512f,#dd2476);
+    box-shadow:0 0 20px #ff3b3b55;
+}
+
+/* stats */
+.stats{
+    background:linear-gradient(135deg,#24c6dc,#514a9d);
+    box-shadow:0 0 20px #5a6bff55;
+}
+
+/* ml */
+.ml{
+    background:linear-gradient(135deg,#00c853,#64dd17);
+    box-shadow:0 0 20px #00ff8855;
+}
+
+.btn:hover{
+    transform:translateY(-5px) scale(1.05);
+    box-shadow:0 10px 40px rgba(255,255,255,0.15);
+}
+
+.footer{
+    position:absolute;
+    bottom:20px;
+    font-size:13px;
+    opacity:0.4;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>JUDGEMENT</h1>
+<div class="subtitle">Crime Intelligence & Prediction Platform</div>
+
+<div class="buttons">
+
+<a href="/heatmap" class="btn heatmap">
+Crime Heatmap
+</a>
+
+<a href="/stats" class="btn stats">
+Crime Statistics
+</a>
+
+<a href="/ml" class="btn ml">
+ML Prediction
+</a>
+
+</div>
+
+</div>
+
+<div class="footer">
+Hackathon Prototype • Crime Data Intelligence
+</div>
+
+</body>
+</html>

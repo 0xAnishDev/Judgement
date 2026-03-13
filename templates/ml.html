@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ML Crime Prediction</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="/static/style.css" rel="stylesheet">
+</head>
+<body>
+    <h2>ML Crime Prediction</h2>
+
+    <label for="crimeSelect">Select Crime:</label>
+    <select id="crimeSelect">
+        {% for crime in crimes %}
+        <option value="{{ crime }}">{{ crime }}</option>
+        {% endfor %}
+    </select>
+
+    <canvas id="yearChart" width="700" height="400"></canvas>
+
+    <script>
+    let chart;
+
+    function fetchAndRender(crime){
+        fetch("/ml_data/" + crime)
+        .then(res => res.json())
+        .then(data => {
+            const years = Object.keys(data.byYear).sort();
+            const counts = years.map(y => data.byYear[y]);
+
+            const ctx = document.getElementById('yearChart').getContext('2d');
+
+            if(chart) chart.destroy();
+
+            chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: years,
+                    datasets: [{
+                        label: crime + " cases per year",
+                        data: counts,
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        });
+    }
+
+    const select = document.getElementById("crimeSelect");
+    select.addEventListener("change", () => fetchAndRender(select.value));
+
+    // initial load
+    fetchAndRender(select.value);
+    </script>
+</body>
+</html>
