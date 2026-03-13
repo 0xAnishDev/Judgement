@@ -46,6 +46,23 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 10
 }).addTo(map)
 
+fetch("/static/india.geojson")
+.then(response => response.json())
+.then(data => {
+
+    var indiaLayer = L.geoJSON(data, {
+        style: {
+            color: "#1b5e20",
+            weight: 1,
+            fillColor: "#2ecc71",
+            fillOpacity: 0.03
+        }
+    }).addTo(map)
+
+    indiaLayer.bringToBack()
+
+})
+
 var heatLayer = L.heatLayer([], {
     radius: 40,
     blur: 70,
