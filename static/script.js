@@ -62,7 +62,7 @@ document.getElementById("crimeSelect").addEventListener("change", function(){
 
     var crime = this.value
 
-    console.log("Selected crime:", crime)
+    if(!crime) return
 
     fetch("/crime/" + crime)
         .then(response => response.json())
@@ -70,18 +70,18 @@ document.getElementById("crimeSelect").addEventListener("change", function(){
 
             console.log("API data:", data)
 
-            updateHeatmap(data)
+            updateHeatmap(data.normalized)   // heatmap uses normalized values
+            updateStats(data.raw)            // stats use real counts
 
         })
 
 })
-console.log("Selected crime:", crime)
-console.log("Crime data:", data)
+
 
 function updateHeatmap(data){
 
     var points = []
-    
+
     for (var city in data){
 
         if(cityCoords[city]){
@@ -89,7 +89,7 @@ function updateHeatmap(data){
             var lat = cityCoords[city][0]
             var lon = cityCoords[city][1]
 
-            var intensity = data[city] * 3
+            var intensity = data[city] * 10
 
             points.push([lat, lon, intensity])
 
@@ -97,22 +97,45 @@ function updateHeatmap(data){
 
     }
 
-    map.removeLayer(heatLayer)
+    heatLayer.setLatLngs(points)
 
-    heatLayer = L.heatLayer(points, {
-        radius: 40,
-        blur: 70,
-        maxZoom: 9,
-        gradient: {
-            0.2: "#ffffb2",
-            0.4: "#fecc5c",
-            0.6: "#fd8d3c",
-            0.8: "#f03b20",
-            1.0: "#bd0026"
-        }
-    }).addTo(map)
-    console.log("City from dataset:", city)
-    console.log("Coords exist:", cityCoords[city])
 }
 
-document.getElementById("crimeSelect").dispatchEvent(new Event("change"))
+function updateStats(rawData){
+
+    let total = 0
+
+    let cities = Object.keys(rawData).length
+
+    let sorted = Object.entries(rawData)
+        .sort((a,b)=>b[1]-a[1])
+
+    sorted.forEach(item => total += item[1])
+
+    let highestCity = sorted[0][0]
+
+    document.getElementById("totalCases").innerText =
+        "Total Cases: " + total
+
+    document.getElementById("citiesAffected").innerText =
+        "Cities Affected: " + cities
+
+    document.getElementById("highestCity").innerText =
+        "Highest City: " + highestCity
+
+    let list = document.getElementById("topCities")
+
+    list.innerHTML = ""
+
+    sorted.slice(0,5).forEach(city => {
+
+        let li = document.createElement("li")
+
+        li.innerText = city[0] + " (" + city[1] + ")"
+
+        list.appendChild(li)
+
+    })
+
+}
+

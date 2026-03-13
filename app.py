@@ -5,14 +5,26 @@ app = Flask(__name__)
 
 df = pd.read_csv("crime_dataset_india.csv")
 
-@app.route("/crime/<crime_type>")
-def get_crime(crime_type):
+print(df.columns)
 
-    filtered = df[df["Crime Description"].str.lower() == crime_type.lower()]
+@app.route("/crime/<crime>")
+def crime_data(crime):
 
-    counts = filtered.groupby("City").size().to_dict()
+    filtered = df[df["Crime Description"] == crime]
 
-    return jsonify(counts)
+    crime_counts = filtered["City"].value_counts().to_dict()
+
+    max_val = max(crime_counts.values()) if crime_counts else 0
+
+    if max_val == 0:
+        normalized = {city: 0 for city in crime_counts}
+    else:
+        normalized = {city: val / max_val for city, val in crime_counts.items()}
+
+    return jsonify({
+        "normalized": normalized,
+        "raw": crime_counts
+    })
 
 @app.route("/")
 def home():
