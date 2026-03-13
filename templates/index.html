@@ -1,42 +1,102 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Crime Heatmap India</title>
 
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<title>Crime Heatmap India</title>
 
-    <style>
-        body{
-            font-family: Arial;
-            margin: 20px;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
-        #map{
-            height: 600px;
-            width: 100%;
-            margin-top:20px;
-        }
-    </style>
+<link rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+<style>
+
+body{
+    margin:0;
+    font-family:'Poppins',sans-serif;
+    background:#f1f5f9;
+}
+
+/* main container */
+
+.container{
+    max-width:1100px;
+    margin:40px auto;
+    padding:20px;
+}
+
+/* header */
+
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.title{
+    font-size:26px;
+    font-weight:600;
+}
+
+/* dropdown */
+
+select{
+    padding:10px 14px;
+    border-radius:8px;
+    border:1px solid #cbd5e1;
+    font-size:14px;
+    background:white;
+}
+
+/* map card */
+
+.map-card{
+    background:white;
+    padding:20px;
+    border-radius:14px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,0.08);
+}
+
+/* map */
+
+#map{
+    height:550px;
+    width:100%;
+    border-radius:10px;
+}
+
+</style>
+
 </head>
 
 <body>
 
-<h2>India Crime Heatmap</h2>
+<div class="container">
 
-<select id="crimeSelect">
-    {% for crime in crimes %}
-    <option value="{{crime}}">{{crime}}</option>
-    {% endfor %}
-</select>
+    <div class="header">
 
-<div id="map"></div>
+        <div class="title">India Crime Heatmap</div>
 
-<!-- Leaflet JS -->
+        <select id="crimeSelect">
+            <option value="" selected disabled>Select Crime Type</option>
+
+            {% for crime in crimes %}
+            <option value="{{crime}}">{{crime}}</option>
+            {% endfor %}
+        </select>
+
+    </div>
+
+    <div class="map-card">
+        <div id="map"></div>
+    </div>
+
+</div>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-<!-- Heatmap plugin -->
 <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
 
 <script src="/static/script.js"></script>
