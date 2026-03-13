@@ -8,7 +8,7 @@ df = pd.read_csv("crime_dataset_india.csv")
 @app.route("/crime/<crime_type>")
 def get_crime(crime_type):
 
-    filtered = df[df["Crime Description"] == crime_type]
+    filtered = df[df["Crime Description"].str.lower() == crime_type.lower()]
 
     counts = filtered.groupby("City").size().to_dict()
 

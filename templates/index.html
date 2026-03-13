@@ -1,7 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Crime Heatmap India</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+    <style>
+        body{
+            font-family: Arial;
+            margin: 20px;
+        }
+
+        #map{
+            height: 600px;
+            width: 100%;
+            margin-top:20px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2>India Crime Heatmap</h2>
+
 <select id="crimeSelect">
-  {% for crime in crimes %}
-  <option value="{{crime}}">{{crime}}</option>
-  {% endfor %}
+    {% for crime in crimes %}
+    <option value="{{crime}}">{{crime}}</option>
+    {% endfor %}
 </select>
 
 <div id="map"></div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- Heatmap plugin -->
+<script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+
+<script src="/static/script.js"></script>
+
+</body>
+</html>
