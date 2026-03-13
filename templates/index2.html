@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Judgement Landing</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to bottom right, #f5f7fa, #c3cfe2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.landing-container {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 60px 40px;
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+    max-width: 500px;
+}
+
+.landing-container h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.landing-container p {
+    font-size: 1rem;
+    margin-bottom: 40px;
+    color: #666;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.landing-btn {
+    padding: 15px 25px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 12px;
+    transition: 0.3s;
+    color: white;
+    text-align: center;
+}
+
+.landing-btn:nth-child(1) { background: #ff6b6b; }  /* Heatmap */
+.landing-btn:nth-child(2) { background: #4dabf7; }  /* Stats */
+.landing-btn:nth-child(3) { background: #51cf66; }  /* ML */
+
+.landing-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}</style>
+</head>
+<body>
+
+<div class="landing-container">
+    <h1>Welcome to Judgement</h1>
+    <p>Analyze crime data and predictions across India</p>
+
+    <div class="button-group">
+        <!-- Heatmap button -->
+        <a href="{{ url_for('heatmap_page') }}" class="landing-btn">🔥 Heatmap</a>
+
+        <!-- ML button (optional default crime can be None) -->
+        <a href="{{ url_for('ml_page') }}" class="landing-btn">🤖 ML Prediction</a>
+    </div>
+</div>
+
+</body>
+</html>

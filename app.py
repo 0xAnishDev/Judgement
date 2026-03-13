@@ -1,6 +1,7 @@
 import pandas as pd
 from flask import Flask, render_template, jsonify
 import sklearn
+import numpy as np
 from sklearn.preprocessing import LabelEncoder
 from sklearn.ensemble import RandomForestClassifier
 import pandas as pd
@@ -106,18 +107,22 @@ def predict(crime):
     top = dict(sorted(predictions.items(), key=lambda x: x[1], reverse=True))
 
     return jsonify(top)
-
-@app.route("/ml/<crime>")
-def ml_page(crime):
-    crimes = df["Crime Description"].unique().tolist()
-    return render_template("ml.html", selected_crime=crime, crimes=crimes)
-
+# Landing page
 @app.route("/")
-def home():
+def landing():
+    return render_template("index2.html")
 
+# Heatmap page
+@app.route("/index")
+def heatmap_page():
     crimes = df["Crime Description"].unique().tolist()
-
     return render_template("index.html", crimes=crimes)
 
+# ML page (we can make crime optional for landing)
+@app.route("/ml")
+@app.route("/ml/<crime>")
+def ml_page(crime=None):
+    crimes = df["Crime Description"].unique().tolist()
+    return render_template("ml.html", crimes=crimes, selected_crime=crime)
 if __name__ == "__main__":
     app.run(debug=True)
