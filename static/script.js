@@ -2,7 +2,7 @@ var indiaBounds = [
     [6.5, 68.0],   // Southwest corner
     [35.5, 97.5]   // Northeast corner
 ]
-
+var crimeChart = null
 var map = L.map('map', {
     maxBounds: indiaBounds,
     maxBoundsViscosity: 1.0
@@ -65,15 +65,14 @@ document.getElementById("crimeSelect").addEventListener("change", function(){
     if(!crime) return
 
     fetch("/crime/" + crime)
-        .then(response => response.json())
-        .then(data => {
+    .then(response => response.json())
+    .then(data => {
 
-            console.log("API data:", data)
+        updateHeatmap(data.normalized)
+        updateStats(data.raw)
+        updateChart(data.yearly)
 
-            updateHeatmap(data.normalized)   // heatmap uses normalized values
-            updateStats(data.raw)            // stats use real counts
-
-        })
+    })
 
 })
 
