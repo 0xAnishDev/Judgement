@@ -8,7 +8,7 @@
     <style>body {
     margin: 0;
     font-family: 'Poppins', sans-serif;
-    background: linear-gradient(to bottom right, #f5f7fa, #c3cfe2);
+    background: linear-gradient(to bottom right, #000000, #444444);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -53,9 +53,9 @@
     text-align: center;
 }
 
-.landing-btn:nth-child(1) { background: #ff6b6b; }  /* Heatmap */
-.landing-btn:nth-child(2) { background: #4dabf7; }  /* Stats */
-.landing-btn:nth-child(3) { background: #51cf66; }  /* ML */
+.landing-btn:nth-child(1) { background: #000000; }  /* Heatmap */
+.landing-btn:nth-child(2) { background: #000000; }  /* Stats */
+.landing-btn:nth-child(3) { background: #000000; }  /* ML */
 
 .landing-btn:hover {
     transform: translateY(-5px);
@@ -65,15 +65,17 @@
 <body>
 
 <div class="landing-container">
-    <h1>Welcome to Judgement</h1>
+    <img src="{{ url_for('static', filename='logo.png') }}" 
+         alt="Judgement Logo" 
+         style="width:300px; margin-bottom:30px;">
     <p>Analyze crime data and predictions across India</p>
 
     <div class="button-group">
         <!-- Heatmap button -->
-        <a href="{{ url_for('heatmap_page') }}" class="landing-btn">🔥 Heatmap</a>
+        <a href="{{ url_for('heatmap_page') }}" class="landing-btn">Heatmap</a>
 
         <!-- ML button (optional default crime can be None) -->
-        <a href="{{ url_for('ml_page') }}" class="landing-btn">🤖 ML Prediction</a>
+        <a href="{{ url_for('ml_page') }}" class="landing-btn">ML Prediction</a>
     </div>
 </div>
 

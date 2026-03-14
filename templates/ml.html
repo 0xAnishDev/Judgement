@@ -1,53 +1,76 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>ML Crime Prediction</title>
+    <title>Crime ML Prediction</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="/static/style.css" rel="stylesheet">
 </head>
 <body>
-    <h2>ML Crime Prediction</h2>
+    <h2 id="crimeTitle">Crime Prediction: {{ selected_crime if selected_crime else crimes[0] }}</h2>
+
+    <canvas id="yearChart" width="600" height="400"></canvas>
 
     <label for="crimeSelect">Select Crime:</label>
     <select id="crimeSelect">
-        {% for crime in crimes %}
-        <option value="{{ crime }}">{{ crime }}</option>
-        {% endfor %}
+    {% for crime in crimes %}
+        <option value="{{ crime }}" {% if loop.first %}selected{% endif %}>{{ crime }}</option>
+    {% endfor %}
     </select>
-
-    <canvas id="yearChart" width="700" height="400"></canvas>
 
     <script>
     let chart;
 
     function fetchAndRender(crime){
+        document.getElementById("crimeTitle").innerText = "Crime Prediction: " + crime;
+
         fetch("/ml_data/" + crime)
         .then(res => res.json())
-        .then(data => {
-            const years = Object.keys(data.byYear).sort();
-            const counts = years.map(y => data.byYear[y]);
+        .then(dataHist => {
+            const yearsHist = Object.keys(dataHist.byYear).sort();
+            const countsHist = yearsHist.map(y => dataHist.byYear[y]);
 
-            const ctx = document.getElementById('yearChart').getContext('2d');
+            fetch("/predict/" + crime)
+            .then(res => res.json())
+            .then(pred => {
+                const lastYearCount = countsHist[countsHist.length - 1]; // 2024
+                const topCities = Object.entries(pred)
+                                        .sort((a,b)=>b[1]-a[1])
+                                        .slice(0,5);
 
-            if(chart) chart.destroy();
+                // scale predictions relative to last year
+                const pred2025 = topCities.reduce((sum,[city,prob]) => sum + prob*lastYearCount,0);
+                const pred2026 = topCities.reduce((sum,[city,prob]) => sum + prob*lastYearCount*1.05,0); // slight growth
 
-            chart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: years,
-                    datasets: [{
-                        label: crime + " cases per year",
-                        data: counts,
-                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: { beginAtZero: true }
+                const years = [...yearsHist,"2025","2026"];
+                const counts = [...countsHist,pred2025,pred2026];
+
+                const ctx = document.getElementById('yearChart').getContext('2d');
+                if(chart) chart.destroy();
+
+                chart = new Chart(ctx,{
+                    type:'bar',
+                    data:{
+                        labels: years,
+                        datasets:[{
+                            label: crime + " cases per year (Projected)",
+                            data: counts,
+                            backgroundColor: [
+                                ...yearsHist.map(()=> 'rgba(54,162,235,0.6)'),
+                                'rgba(255,99,132,0.5)',
+                                'rgba(255,99,132,0.5)'
+                            ],
+                            borderColor: [
+                                ...yearsHist.map(()=> 'rgba(54,162,235,1)'),
+                                'rgba(255,99,132,1)',
+                                'rgba(255,99,132,1)'
+                            ],
+                            borderWidth:1
+                        }]
+                    },
+                    options:{
+                        scales:{y:{beginAtZero:true}}
                     }
-                }
+                });
             });
         });
     }
@@ -55,7 +78,7 @@
     const select = document.getElementById("crimeSelect");
     select.addEventListener("change", () => fetchAndRender(select.value));
 
-    // initial load
+    // initial load with first crime
     fetchAndRender(select.value);
     </script>
 </body>
