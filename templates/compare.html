@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Compare Cities</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="/static/style.css" rel="stylesheet">
+    <style>
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #f4f7f9;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 1000px;   /* smaller max-width for neat layout */
+    margin: 30px auto;
+    padding: 30px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+.compare-controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+select {
+    padding: 10px 14px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+button {
+    background-color: #36A2EB;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+button:hover {
+    background-color: #2a84c4;
+}
+
+.compare-stats {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.stat-card {
+    background: #f9f9f9;
+    padding: 15px 20px;
+    border-radius: 8px;
+    width: 280px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.stat-card h3 {
+    margin-bottom: 12px;
+    color: #555;
+}
+
+/* Chart container with padding and max-width */
+.chart-container {
+    margin-top: 40px;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+#compareChart {
+    max-width: 900px;
+    margin: 0 auto;
+    display: block;
+}
+</style>
+</head>
+<body>
+    <h2>Compare Crime Trends Between Cities</h2>
+
+    <div class="compare-controls">
+        <label for="crimeSelect">Select Crime:</label>
+        <select id="crimeSelect">
+            {% for crime in crimes %}
+            <option value="{{ crime }}">{{ crime }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="city1Select">City 1:</label>
+        <select id="city1Select">
+            {% for city in cities %}
+            <option value="{{ city }}">{{ city }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="city2Select">City 2:</label>
+        <select id="city2Select">
+            {% for city in cities %}
+            <option value="{{ city }}">{{ city }}</option>
+            {% endfor %}
+        </select>
+
+        <button id="compareBtn">Compare</button>
+    </div>
+
+    <div class="compare-stats">
+        <div class="stat-card">
+            <h3 id="city1Name">City 1 Stats</h3>
+            <p id="city1Total">Total Cases: -</p>
+            <p id="city1Highest">Highest Year: -</p>
+        </div>
+
+        <div class="stat-card">
+            <h3 id="city2Name">City 2 Stats</h3>
+            <p id="city2Total">Total Cases: -</p>
+            <p id="city2Highest">Highest Year: -</p>
+        </div>
+    </div>
+
+    <canvas id="compareChart" width="500" height="300"></canvas>
+
+    <script>
+let compareChart;
+
+async function renderComparison(){
+    const crime = document.getElementById("crimeSelect").value;
+    const city1 = document.getElementById("city1Select").value;
+    const city2 = document.getElementById("city2Select").value;
+
+    const res = await fetch(`/compare_data/${crime}/${city1}/${city2}`);
+    const data = await res.json();
+
+    const years = data.years;
+    const counts1 = years.map(y => data.city1[y] || 0);
+    const counts2 = years.map(y => data.city2[y] || 0);
+
+    // Update stats
+    document.getElementById("city1Name").innerText = city1 + " Stats";
+    document.getElementById("city1Total").innerText = "Total Cases: " + counts1.reduce((a,b)=>a+b,0);
+    document.getElementById("city1Highest").innerText = "Highest Year: " + years[counts1.indexOf(Math.max(...counts1))];
+
+    document.getElementById("city2Name").innerText = city2 + " Stats";
+    document.getElementById("city2Total").innerText = "Total Cases: " + counts2.reduce((a,b)=>a+b,0);
+    document.getElementById("city2Highest").innerText = "Highest Year: " + years[counts2.indexOf(Math.max(...counts2))];
+
+    // Render chart
+    const ctx = document.getElementById("compareChart").getContext("2d");
+    if(compareChart) compareChart.destroy();
+
+    compareChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: years,
+            datasets: [
+                {
+                    label: city1,
+                    data: counts1,
+                    borderColor: 'rgba(54,162,235,1)',
+                    backgroundColor: 'rgba(54,162,235,0.3)',
+                    fill: false
+                },
+                {
+                    label: city2,
+                    data: counts2,
+                    borderColor: 'rgba(255,99,132,1)',
+                    backgroundColor: 'rgba(255,99,132,0.3)',
+                    fill: false
+                }
+            ]
+        },
+        options: { scales: { y: { beginAtZero: true } } }
+    });
+}
+
+document.getElementById("compareBtn").addEventListener("click", renderComparison);
+</script>
+</body>
+</html>

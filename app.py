@@ -124,5 +124,28 @@ def heatmap_page():
 def ml_page(crime=None):
     crimes = df["Crime Description"].unique().tolist()
     return render_template("ml.html", crimes=crimes, selected_crime=crime)
+
+@app.route("/compare")
+def compare_page():
+    crimes = df["Crime Description"].unique().tolist()
+    cities = df["City"].unique().tolist()
+    return render_template("compare.html", crimes=crimes, cities=cities)
+
+@app.route("/compare_data/<crime>/<city1>/<city2>")
+def compare_data(crime, city1, city2):
+    filtered = df[df["Crime Description"] == crime]
+    # parse year
+    filtered["Year"] = pd.to_datetime(filtered["Date Reported"], format="%d-%m-%Y %H:%M", errors='coerce').dt.year
+
+    # group by city and year
+    city1_counts = filtered[filtered["City"] == city1].groupby("Year").size().to_dict()
+    city2_counts = filtered[filtered["City"] == city2].groupby("Year").size().to_dict()
+
+    return jsonify({
+        "years": sorted(list(set(city1_counts.keys()).union(set(city2_counts.keys())))),
+        "city1": city1_counts,
+        "city2": city2_counts
+    })
+
 if __name__ == "__main__":
     app.run(debug=True)

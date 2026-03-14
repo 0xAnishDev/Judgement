@@ -32,17 +32,18 @@
             fetch("/predict/" + crime)
             .then(res => res.json())
             .then(pred => {
+                //inaccurate but working
                 const lastYearCount = countsHist[countsHist.length - 1]; // 2024
                 const topCities = Object.entries(pred)
                                         .sort((a,b)=>b[1]-a[1])
                                         .slice(0,5);
 
                 // scale predictions relative to last year
-                const pred2025 = topCities.reduce((sum,[city,prob]) => sum + prob*lastYearCount,0);
                 const pred2026 = topCities.reduce((sum,[city,prob]) => sum + prob*lastYearCount*1.05,0); // slight growth
 
-                const years = [...yearsHist,"2025","2026"];
-                const counts = [...countsHist,pred2025,pred2026];
+                const years = [...yearsHist,"2026"];
+                const counts = [...countsHist,pred2026];
+
 
                 const ctx = document.getElementById('yearChart').getContext('2d');
                 if(chart) chart.destroy();
