@@ -32,18 +32,28 @@
             fetch("/predict/" + crime)
             .then(res => res.json())
             .then(pred => {
-                //inaccurate but working
-                const lastYearCount = countsHist[countsHist.length - 1]; // 2024
-                const topCities = Object.entries(pred)
-                                        .sort((a,b)=>b[1]-a[1])
-                                        .slice(0,5);
+                const yearsHistNum = yearsHist.map(y => parseInt(y)); // convert years to numbers
+const n = yearsHistNum.length;
 
-                // scale predictions relative to last year
-                const pred2026 = topCities.reduce((sum,[city,prob]) => sum + prob*lastYearCount*1.05,0); // slight growth
+// simple linear regression: y = m*x + b
+// calculate slope m
+let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
+for (let i = 0; i < n; i++) {
+    sumX += yearsHistNum[i];
+    sumY += countsHist[i];
+    sumXY += yearsHistNum[i] * countsHist[i];
+    sumXX += yearsHistNum[i] * yearsHistNum[i];
+}
+const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+const intercept = (sumY - slope * sumX) / n;
 
-                const years = [...yearsHist,"2026"];
-                const counts = [...countsHist,pred2026];
+// project 2026
+const year2026 = 2026;
+const pred2026 = slope * year2026 + intercept;
 
+// final array
+const years = [...yearsHistNum, year2026];
+const counts = [...countsHist, Math.max(pred2026, 0)]; // avoid negative
 
                 const ctx = document.getElementById('yearChart').getContext('2d');
                 if(chart) chart.destroy();
