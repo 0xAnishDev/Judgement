@@ -188,7 +188,10 @@ async function renderComparison(){
                 }
             ]
         },
-        options: { scales: { y: { beginAtZero: true } } }
+        options: { scales: { y: { beginAtZero: true, ticks: {
+                    // auto-scale, or you can force step size
+                    stepSize: 1
+                } } } }
     });
 }
 
