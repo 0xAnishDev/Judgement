@@ -4,7 +4,6 @@ import sklearn
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
 from sklearn.ensemble import RandomForestClassifier
-import pandas as pd
 
 app = Flask(__name__)
 

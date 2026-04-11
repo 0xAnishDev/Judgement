@@ -218,7 +218,7 @@ function updateHeatmap(data){
             var lat = cityCoords[city][0]
             var lon = cityCoords[city][1]
 
-            var intensity = data[city] * 10
+            var intensity = data[city] * 20
 
             points.push([lat, lon, intensity])
 
